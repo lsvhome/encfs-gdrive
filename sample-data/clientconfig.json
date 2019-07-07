@@ -1,0 +1,20 @@
+﻿{
+  "allowcreatevolume": true,
+  "mountpoints": [
+    {
+      "id": "{4C45F533-0238-405F-AAF0-7309623F4351}",
+      "Name": "Encrypted",
+      "Uri": "gdrive://warrior02@wbsfb.com/encrypted"
+    },
+    {
+      "id": "{5C45F533-0238-405F-AAF0-7309623F4351}",
+      "Name": "Test001",
+      "Uri": "gdrive://warrior02@wbsfb.com/tests001/1/2/3"
+    },
+    {
+      "id": "{6C45F533-0238-405F-AAF0-7309623F4351}",
+      "Name": "encfstest",
+      "Uri": "gdrive://warrior02@wbsfb.com/encfstest"
+    }
+  ]
+}
