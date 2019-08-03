@@ -1,5 +1,163 @@
-﻿window.jsFunctions = {
+﻿window.fileUtil = {
 
+    checkFileApi: function () {
+        // Проверяем поддержку File API 
+        if (window.File && window.FileReader && window.FileList && window.Blob) {
+            // Работает
+
+            window.requestFileSystem =
+                window.requestFileSystem ||
+                window.webkitRequestFileSystem;
+            // window.requestFileSystem is undefined on Safari and mobile
+            return true;
+        } else {
+            //debugger;
+            //alert('File API не поддерживается данным браузером');
+            console.error("error #38475630945 : File API doesn't supported");
+            return false;
+        }
+
+    },
+
+    initFileApi: function () {
+
+        var promise = new Promise((resolve, reject) => {
+            if (fileUtil.checkFileApi()) {
+                if (window.File && window.FileReader && window.FileList && window.Blob) {
+
+                    window.requestFileSystem =
+                        window.requestFileSystem ||
+                        window.webkitRequestFileSystem;
+                    //// window.requestFileSystem is undefined on Safari and mobile
+
+                    window.requestFileSystem(window.TEMPORARY,
+                        0,
+                        (data) => {
+                            window.fileUtil.fs = data;
+                            resolve(true);
+                        },
+                        (error) => {
+                            console.error(error);
+                            reject(false);
+                        });
+                }
+            } else {
+                console.error("error #873897439");
+                reject(false);
+            }
+        });
+
+        return promise;
+    },
+
+
+    createFile: function(fileName) {
+
+        let promise = new Promise(function (resolve, reject) {
+
+            function recreate(fs) {
+                //debugger;
+                fs.root.getFile(fileName,
+                    { create: true, exclusive: true },
+                    function (fileEntry) {
+                        //debugger;
+                        // fileEntry будет иметь следующие свойства
+                        // fileEntry.isFile === true
+                        // fileEntry.name == 'log.txt'
+                        // fileEntry.fullPath == '/log.txt'
+                        console.log("file was created");
+                        resolve(fileEntry.toURL());
+                    },
+                    (error) => { reject(error); });
+                //debugger;
+            };
+
+            let dirReader = window.fileUtil.fs.root.createReader();
+
+            dirReader.readEntries(
+                (results) =>  {
+
+                    let found = false;
+
+                    if (results.length > 0) {
+                        
+                        for (i = 0; i < results.length; i++) {
+                            let g = results[i];
+                            //debugger;
+                            if (g.name == fileName) {
+                                //debugger;
+                                found = true;
+                                g.remove((r) => {
+                                        //debugger;
+                                    recreate(window.fileUtil.fs);
+                                    },
+                                    (error) => {
+                                        //debugger;
+                                        reject(error);
+                                    });
+                            }
+                        }
+                    }
+
+                    if (!found) {
+                        recreate(window.fileUtil.fs);
+                    }
+                },
+                (error) => { reject(error); });
+        });
+
+        return promise;
+    },
+
+    appendFile: function (filename, bytesBase64) {
+        //debugger;
+        let promise = new Promise(function(resolve, reject) {
+            window.fileUtil.fs.root.getFile(
+                filename,
+                { create: false },
+                (fileEntry) => {
+                    //debugger;
+                    fileEntry.createWriter(
+                        (fileWriter) => {
+
+                            fileWriter.seek(fileWriter.length); // Start write position at EOF.
+
+                            let charArray = atob(bytesBase64);
+                            let byteArray = Uint8Array.from(charArray, c => c.charCodeAt(0))
+                            var blob = new Blob([byteArray], { type: 'application/octet-binary' });
+                            fileWriter.write(blob);
+                            resolve(fileEntry);
+                        },
+                        (error) => { reject(error); });
+
+
+                },
+                (error) => { reject(error); });
+        });
+
+        return promise;
+    },
+
+    saveLinkAs: function (url, filename) {
+        let link = document.createElement('a');
+        link.download = filename;
+        link.href = url; // "data:application/octet-stream;base64," + bytesBase64;
+        document.body.appendChild(link); // Needed for Firefox
+        try {
+            link.click();
+        } catch (e) {
+            console.error(e);
+        } 
+        document.body.removeChild(link);
+    }
+};
+
+window.jsFunctions = {
+    isChrome: function () {
+        // https://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
+        let isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
+        return isChrome;
+    },
 
 
     loadFile: function (inputFileElementRef) {
@@ -134,7 +292,7 @@
                     }
 
                     console.debug(data.content.length);
-                    
+
                     resolve(data);
                 }, false);
 
@@ -222,7 +380,7 @@
 
         }
         debugger;
-        window.requestFileSystem(window.PERSISTENT, 1024 * 1024, onInitFs1, function(e) {
+        window.requestFileSystem(window.PERSISTENT, 1024 * 1024, onInitFs1, function (e) {
             console.log(e);
             debugger;
         });
@@ -313,7 +471,7 @@
         window.requestFileSystem(window.TEMPORARY, 1024 * 1024, onInitFs, errorHandlerAp);
     },
 
-    saveAsFile: function(filename, bytesBase64) {
+    saveAsFile: function (filename, bytesBase64) {
         //console.log("saveAsFile 001 " +filename);
         console.log(bytesBase64.length);
         var link = document.createElement('a');
@@ -402,7 +560,7 @@
     */
 
 
-    login: function(url001, redirecturl) {
+    login: function (url001, redirecturl) {
 
         var result;
         var promise = new Promise(function (resolve, reject) {
@@ -447,7 +605,7 @@
 
         return promise;
     },
-    gup: function(url, name) {
+    gup: function (url, name) {
         //console.log("gup1 " + url);
         //console.log("gup2 " + name);
         name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
@@ -500,44 +658,44 @@
     //    getEntries();
     //    return entries;
     //},
-    errorHandler: function(e) {
+    errorHandler: function (e) {
         //debugger;
         var msg = '';
 
         switch (e.code) {
-        case 22://FileError.QUOTA_EXCEEDED_ERR:
-            msg = 'QUOTA_EXCEEDED_ERR';
-            debugger;
-            window.webkitStorageInfo.requestQuota(PERSISTENT, 1024 * 1024, function (grantedBytes) {
+            case 22://FileError.QUOTA_EXCEEDED_ERR:
+                msg = 'QUOTA_EXCEEDED_ERR';
                 debugger;
-                window.requestFileSystem(PERSISTENT, grantedBytes, onInitFs, jsFunctions.errorHandler);
-                //initFS(grantedBytes);
-            }, function (e) {
-                debugger;
-                console.log('Error', e);
-            });
-            break;
-        //case FileError.NOT_FOUND_ERR:
-        //    msg = 'NOT_FOUND_ERR';
-        //    break;
-        //case FileError.SECURITY_ERR:
-        //    msg = 'SECURITY_ERR';
-        //    break;
-        //case FileError.INVALID_MODIFICATION_ERR:
-        //    msg = 'INVALID_MODIFICATION_ERR';
-        //    break;
-        //case FileError.INVALID_STATE_ERR:
-        //    msg = 'INVALID_STATE_ERR';
-        //    break;
-        default:
-            msg = 'Unknown Error: ' + e;
-            break;
+                window.webkitStorageInfo.requestQuota(PERSISTENT, 1024 * 1024, function (grantedBytes) {
+                    debugger;
+                    window.requestFileSystem(PERSISTENT, grantedBytes, onInitFs, jsFunctions.errorHandler);
+                    //initFS(grantedBytes);
+                }, function (e) {
+                    debugger;
+                    console.log('Error', e);
+                });
+                break;
+            //case FileError.NOT_FOUND_ERR:
+            //    msg = 'NOT_FOUND_ERR';
+            //    break;
+            //case FileError.SECURITY_ERR:
+            //    msg = 'SECURITY_ERR';
+            //    break;
+            //case FileError.INVALID_MODIFICATION_ERR:
+            //    msg = 'INVALID_MODIFICATION_ERR';
+            //    break;
+            //case FileError.INVALID_STATE_ERR:
+            //    msg = 'INVALID_STATE_ERR';
+            //    break;
+            default:
+                msg = 'Unknown Error: ' + e;
+                break;
         };
 
         console.log('Error: ' + msg);
     },
     createFile: function (fileName) {
-        let promise = new Promise(function(resolve, reject) {
+        let promise = new Promise(function (resolve, reject) {
             jsFunctions.checkFileApi();
 
             function errorHandlerCr(e) {
@@ -545,36 +703,36 @@
                 var msg = '';
 
                 switch (e.code) {
-                case 22: //FileError.QUOTA_EXCEEDED_ERR:
-                    msg = 'QUOTA_EXCEEDED_ERR';
-                    debugger;
-                    window.webkitStorageInfo.requestQuota(PERSISTENT,
-                        1024 * 1024,
-                        function(grantedBytes) {
-                            debugger;
-                            window.requestFileSystem(PERSISTENT, grantedBytes, onInitFs, jsFunctions.errorHandler);
-                            //initFS(grantedBytes);
-                        },
-                        function(e) {
-                            debugger;
-                            console.log('Error', e);
-                        });
-                    break;
-                //case FileError.NOT_FOUND_ERR:
-                //    msg = 'NOT_FOUND_ERR';
-                //    break;
-                //case FileError.SECURITY_ERR:
-                //    msg = 'SECURITY_ERR';
-                //    break;
-                //case FileError.INVALID_MODIFICATION_ERR:
-                //    msg = 'INVALID_MODIFICATION_ERR';
-                //    break;
-                //case FileError.INVALID_STATE_ERR:
-                //    msg = 'INVALID_STATE_ERR';
-                //    break;
-                default:
-                    msg = 'Unknown Error: ' + e;
-                    break;
+                    case 22: //FileError.QUOTA_EXCEEDED_ERR:
+                        msg = 'QUOTA_EXCEEDED_ERR';
+                        debugger;
+                        window.webkitStorageInfo.requestQuota(PERSISTENT,
+                            1024 * 1024,
+                            function (grantedBytes) {
+                                debugger;
+                                window.requestFileSystem(PERSISTENT, grantedBytes, onInitFs, jsFunctions.errorHandler);
+                                //initFS(grantedBytes);
+                            },
+                            function (e) {
+                                debugger;
+                                console.log('Error', e);
+                            });
+                        break;
+                    //case FileError.NOT_FOUND_ERR:
+                    //    msg = 'NOT_FOUND_ERR';
+                    //    break;
+                    //case FileError.SECURITY_ERR:
+                    //    msg = 'SECURITY_ERR';
+                    //    break;
+                    //case FileError.INVALID_MODIFICATION_ERR:
+                    //    msg = 'INVALID_MODIFICATION_ERR';
+                    //    break;
+                    //case FileError.INVALID_STATE_ERR:
+                    //    msg = 'INVALID_STATE_ERR';
+                    //    break;
+                    default:
+                        msg = 'Unknown Error: ' + e;
+                        break;
                 };
 
                 console.log('Error: ' + msg);
@@ -585,7 +743,7 @@
                 //debugger;
                 fs.root.getFile(fileName,
                     { create: true, exclusive: true },
-                    function(fileEntry) {
+                    function (fileEntry) {
                         //debugger;
                         // fileEntry будет иметь следующие свойства
                         // fileEntry.isFile === true
@@ -603,13 +761,13 @@
                 let dirReader = fs.root.createReader();
 
 
-                dirReader.readEntries(function(results) {
-                        //if (results.length) {
-                        //entries = entries.concat(toArray(results));
-                        //getEntries();
+                dirReader.readEntries(function (results) {
+                    //if (results.length) {
+                    //entries = entries.concat(toArray(results));
+                    //getEntries();
 
-                        //let gg = jsFunctions.readDirectory(fs.root);
-                        //console.log(gg);
+                    //let gg = jsFunctions.readDirectory(fs.root);
+                    //console.log(gg);
                     if (results.length > 0) {
                         let found = false;
                         for (i = 0; i < results.length; i++) {
@@ -619,9 +777,9 @@
                                 //debugger;
                                 found = true;
                                 g.remove((r) => {
-                                        //debugger;
-                                        cr(fs);
-                                    },
+                                    //debugger;
+                                    cr(fs);
+                                },
                                     (e) => {
                                         //debugger;
                                     });
@@ -630,8 +788,8 @@
 
                         }
                         if (!found) {
-                                cr(fs);
-                            }
+                            cr(fs);
+                        }
 
                     }
                     else if (results.length == 0) {
@@ -642,7 +800,7 @@
 
 
                     //}
-                    },
+                },
                     errorHandlerCr);
 
             };
@@ -666,69 +824,69 @@
                 var msg = '';
 
                 switch (e.code) {
-                case 22: //FileError.QUOTA_EXCEEDED_ERR:
-                    msg = 'QUOTA_EXCEEDED_ERR';
-                    debugger;
-                    window.webkitStorageInfo.requestQuota(PERSISTENT,
-                        1024 * 1024,
-                        function (grantedBytes) {
-                            debugger;
-                            window.requestFileSystem(PERSISTENT, grantedBytes, onInitFs, errorHandlerAp);
-                            //initFS(grantedBytes);
-                        },
-                        function (e) {
-                            debugger;
-                            console.log('Error', e);
-                        });
-                    break;
-                //case FileError.NOT_FOUND_ERR:
-                //    msg = 'NOT_FOUND_ERR';
-                //    break;
-                //case FileError.SECURITY_ERR:
-                //    msg = 'SECURITY_ERR';
-                //    break;
-                //case FileError.INVALID_MODIFICATION_ERR:
-                //    msg = 'INVALID_MODIFICATION_ERR';
-                //    break;
-                //case FileError.INVALID_STATE_ERR:
-                //    msg = 'INVALID_STATE_ERR';
-                //    break;
-                default:
-                    msg = 'Unknown Error: ' + e;
-                    break;
+                    case 22: //FileError.QUOTA_EXCEEDED_ERR:
+                        msg = 'QUOTA_EXCEEDED_ERR';
+                        debugger;
+                        window.webkitStorageInfo.requestQuota(PERSISTENT,
+                            1024 * 1024,
+                            function (grantedBytes) {
+                                debugger;
+                                window.requestFileSystem(PERSISTENT, grantedBytes, onInitFs, errorHandlerAp);
+                                //initFS(grantedBytes);
+                            },
+                            function (e) {
+                                debugger;
+                                console.log('Error', e);
+                            });
+                        break;
+                    //case FileError.NOT_FOUND_ERR:
+                    //    msg = 'NOT_FOUND_ERR';
+                    //    break;
+                    //case FileError.SECURITY_ERR:
+                    //    msg = 'SECURITY_ERR';
+                    //    break;
+                    //case FileError.INVALID_MODIFICATION_ERR:
+                    //    msg = 'INVALID_MODIFICATION_ERR';
+                    //    break;
+                    //case FileError.INVALID_STATE_ERR:
+                    //    msg = 'INVALID_STATE_ERR';
+                    //    break;
+                    default:
+                        msg = 'Unknown Error: ' + e;
+                        break;
                 };
 
                 console.log('Error: ' + msg);
                 reject(e);
             };
-        function onInitFs(fs) {
-            //debugger;
-            //link.href = "data:application/octet-stream;base64," + bytesBase64;
-            fs.root.getFile(filename, { create: false }, function (fileEntry) {
+            function onInitFs(fs) {
                 //debugger;
-                fileEntry.createWriter(function (fileWriter) {
-                    
-                    fileWriter.seek(fileWriter.length); // Start write position at EOF.
-
-                    //var bb = new BlobBuilder();
-                    //bb.append(bytesBase64);
-                    //fileWriter.write(bb.getBlob('text/plain'));
-
-                    //var blob = new Blob(['Lorem Ipsum'], { type: 'text/plain' });
-                    //var blob = new Blob([bytesBase64], { type: 'text/plain' });
-                    let hh = atob(bytesBase64);
-                    let hj = Uint8Array.from(hh, c => c.charCodeAt(0))
+                //link.href = "data:application/octet-stream;base64," + bytesBase64;
+                fs.root.getFile(filename, { create: false }, function (fileEntry) {
                     //debugger;
-                    //var blob = new Blob([hh], { type: 'application/octet-binary' });
-                    var blob = new Blob([hj], { type: 'application/octet-binary' });
-                    fileWriter.write(blob);
-                    //debugger;
-                    resolve(filename);
+                    fileEntry.createWriter(function (fileWriter) {
+
+                        fileWriter.seek(fileWriter.length); // Start write position at EOF.
+
+                        //var bb = new BlobBuilder();
+                        //bb.append(bytesBase64);
+                        //fileWriter.write(bb.getBlob('text/plain'));
+
+                        //var blob = new Blob(['Lorem Ipsum'], { type: 'text/plain' });
+                        //var blob = new Blob([bytesBase64], { type: 'text/plain' });
+                        let hh = atob(bytesBase64);
+                        let hj = Uint8Array.from(hh, c => c.charCodeAt(0))
+                        //debugger;
+                        //var blob = new Blob([hh], { type: 'application/octet-binary' });
+                        var blob = new Blob([hj], { type: 'application/octet-binary' });
+                        fileWriter.write(blob);
+                        //debugger;
+                        resolve(filename);
+                    }, errorHandlerAp);
+
                 }, errorHandlerAp);
 
-            }, errorHandlerAp);
-
-        }
+            }
 
             window.requestFileSystem(window.TEMPORARY, 1024, onInitFs, errorHandlerAp);
         });
