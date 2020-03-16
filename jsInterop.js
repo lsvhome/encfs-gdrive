@@ -259,17 +259,13 @@ window.jsFunctions = {
     },
 
     showModalDialog: function (modalId) {
-        //debugger;
-        console.log(modalId);
         var promise = new Promise(function (resolve, reject) {
             try {
 
                 let foundModals = $('#' + modalId);
-                console.log(foundModals.length);
                 foundModals[0].result = false;
                 var handler = function (e) {
 
-                    //alert('hidden');
                     foundModals.off("hidden.bs.modal", handler);
                     if (foundModals[0].result == true) {
                         resolve(true);
@@ -280,51 +276,28 @@ window.jsFunctions = {
                     else {
                         reject("Unknown result data type.");
                     }
-
                 };
+
                 foundModals.on('hidden.bs.modal', handler);
-
-                //$('#myModal').on('dismiss.bs.modal', function (e) {
-                //    alert('click.dismiss.bs.modal');
-                //});
-                //$('#bookTitleField').text("AAAAAAAAAAAAAAA");
                 foundModals.modal('show');
-                //debugger;
-                //$('#myModal')[0].resolve = resolve;
-                //$('#myModal')[0].reject = reject;
-                //setTimeout(() => {
-                //    $('#myModal').modal('hide');
-                //    $('#myModal')[0].resolve(true);
-                //    //resolve(true);
-
-                //}, 5000);
             } catch (e) {
                 reject("Exception: " + e);
-
             }
-
         });
 
         return promise;
-
-
-        //return dotnetHelper.invokeMethodAsync('SayHello')
-        //    .then(r => console.log(r));
     },
 
     login: function (url001, redirecturl) {
 
         var result;
         var promise = new Promise(function (resolve, reject) {
-            //debugger;
             var win = window.open(url001, "windowname1", 'width=800, height=800');
 
             var pollTimer = window.setInterval(function () {
-                //console.log("pollTimer");
                 try {
 
                     if (true == win.closed && result == undefined) {
-                        //console.log("clearInterval 1");
                         result = false;
                         window.clearInterval(pollTimer);
                         reject();
@@ -340,9 +313,8 @@ window.jsFunctions = {
                     }
 
                     if (url.indexOf(redirecturl) != -1) {
-                        //console.log("clearInterval 2");
                         window.clearInterval(pollTimer);
-                        var acCode = jsFunctions.gup(url, 'code');
+                        var acCode = jsFunctions.getQueryParamValue(url, 'code');
                         result = true;
                         win.close();
 
@@ -358,22 +330,15 @@ window.jsFunctions = {
         return promise;
     },
 
-    gup: function (url, name) {
-        //console.log("gup1 " + url);
-        //console.log("gup2 " + name);
+    getQueryParamValue: function (url, name) {
         name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-        //console.log("gup3 " + name);
         var regexS = "[\\#&\?]" + name + "=([^&]*)";
-        //console.log("gup4 " + regexS);
         var regex = new RegExp(regexS);
         var results = regex.exec(url);
-        //console.log("gup5 " + results);
         if (results == null) {
-            //console.log("gup7 ");
             return "";
         }
         else {
-            console.log("gup6 " + results[1]);
             return results[1];
         }
     },
