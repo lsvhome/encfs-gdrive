@@ -4,7 +4,7 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-app {
+div#app {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -114,7 +114,7 @@ app {
 }
 
 @media (min-width: 768px) {
-    app {
+    div#app {
         flex-direction: row;
     }
 
