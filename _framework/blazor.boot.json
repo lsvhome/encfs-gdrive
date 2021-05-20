@@ -194,10 +194,10 @@
       "Newtonsoft.Json.dll": "sha256-mRd6TL4DYldo1ko9czkjEDcoiPdMPrJxz3dekwV6OOY=",
       "BouncyCastle.Crypto.dll": "sha256-3f7ODqQydks7ElUv3ue28WbeQXuIpGKkqVg75Q6rXEk=",
       "System.IO.Pipelines.dll": "sha256-3ET+mpR7F058YRj9YaLHOVXBqOW6iUxtIpeiKPYw4PA=",
-      "EncFS.Adapters.Common.dll": "sha256-1byGSkakT5qNZJXRA\/hhEfQTodQeBihsu8vaS6nBsDk=",
-      "EncFS.dll": "sha256-zzUdBCrX2\/ewCjYcyrAtTCG+\/\/a\/xu9eeBopSDykhTo=",
-      "EncFSFileProvider.GoogleDrive.dll": "sha256-0BO8h6rCvogpTzuVPTGYy5+EqcQZ7Pe7EVnMbHXkOt8=",
-      "EncFSLocalWebBrowser5.Client.dll": "sha256-+1TqGLrBz1UPr5e2Bt+jvTEfASwdsAMB6cYiRXrbn\/E="
+      "EncFS.Adapters.Common.dll": "sha256-5yvkmq0nSQUjUv2SakK+kR9kwTjqr+VtPd03Qb7haAU=",
+      "EncFS.dll": "sha256-TOByI2I2ucBn+vXXWnPh1XtI+W5K9ZwA9o4HJCybiag=",
+      "EncFSFileProvider.GoogleDrive.dll": "sha256-\/CGnsmp5LrW5AJevFnPKTVa+p0ltVTk0h8FRWSpctQI=",
+      "EncFSLocalWebBrowser5.Client.dll": "sha256-UrVTqpQQun5rj3DWy9Es\/7XoRIAV4OeJMmto\/+veBns="
     },
     "lazyAssembly": null,
     "pdb": null,
