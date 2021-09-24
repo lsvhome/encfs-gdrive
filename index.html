@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <title>Encrypted Google Drive</title>
-    <base href="/">
+    <base href="/" />
 
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -16,115 +16,26 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
 
     <link href="css/site.css" rel="stylesheet">
-    <link rel="icon" type="image/png" href="icon.png" />
+    <link href="css/app.css" rel="stylesheet">
+    <link href="EncFSLocalWebBrowser5.Client.styles.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="icon-24.png" />
+    <link href="manifest.json" rel="manifest" />
+    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
 
 </head>
 <body>
     <div id="app">
         <!-- spinner --->
         <div class="spinner-wrapper" role="status">
-            <div class="spinner-border" >
+            <div class="spinner-border">
                 <span class="spinner-border"></span>
             </div>
         </div>
         <!-- /spinner --->
-
-        <div class="sidebar">
-            <!--!--><!--!-->
-            <div class="top-row pl-4 navbar navbar-dark">
-                <a class="navbar-brand" href="">EncFS Local WebBrowser</a>
-            </div>
-
-            <div>
-                <ul class="nav flex-column">
-                    <li class="nav-item px-3">
-                        <!--!-->
-                        <a class="nav-link active" href="" match="All">
-                            <!--!-->
-                            <span class="oi oi-home" aria-hidden="true"></span> Home
-                        </a>
-                    </li>
-
-
-
-                    <li class="nav-item px-3">
-                        <!--!-->
-                        <a class="nav-link" href="terms.html" target="_blank">
-                            <!--!-->
-                            <span class="oi oi-shield" aria-hidden="true"></span> Terms of Service
-                        </a>
-                    </li>
-
-                    <li class="nav-item px-3">
-                        <!--!-->
-                        <a class="nav-link" href="policy.html" target="_blank">
-                            <!--!-->
-                            <span class="oi oi-shield" aria-hidden="true"></span> Privacy Policy
-                        </a>
-                    </li>
-
-                    <li class="nav-item px-3">
-                        <!--!-->
-                        <a class="nav-link" href="hire.html" target="_blank">
-                            <!--!-->
-                            <span class="oi oi-command" aria-hidden="true"></span> Hire Author
-                        </a>
-                    </li>
-
-                    <li class="nav-item px-3">
-                        <!--!-->
-                        <a class="nav-link" href="mailto:lsvhome@gmail.com" target="_blank">
-                            <!--!-->
-                            <span class="oi oi-envelope-closed" aria-hidden="true"></span> Contacts
-                        </a>
-                    </li>
-
-
-
-                </ul>
-            </div>
-        </div>
-
-        <div class="main">
-            <!--!-->
-            <div class="top-row px-4">
-                <a class="navbar-brand" href="">EncFS over Google Drive</a>
-            </div>
-
-            <div class="content px-4">
-                <!--!--><!--!-->
-                <h2>Dear Visitor,</h2>
-                <!--!-->
-                <p>Welcome to the application that helps you to hold YOUR data at YOUR Google Drive in encrypted state.</p>
-                All encryption and decryption would be done on YOUR computer within YOUR browser.
-                <br>
-                No any byte shall be sent to third-party servers - data walks only between your browser and Google Drive servers.
-                <br>
-                And that data transfers are encrypted too!
-                <br>
-                All encryption/decrypion steps will be done within your browser.
-                <br>
-                Another advantages of this service are:
-                <br>1. It uses well-known standard of storage encryption named <!--!--><a href="https://en.wikipedia.org/wiki/EncFS" target="_blank">EncFS</a>.
-                It means you may encrypt/decrypt your data with third-party tools
-                <br>2. You don't require to install any software to your computer.
-                <br>
-                <br>
-                <!--!--><b>Let's start to improve your privacy!</b>
-                <br>
-                <br>
-                First step. You should be authorized by Google for Drive access.
-
-                <button class="btn btn-default" disabled>
-                    <!--!--><span>Authorize</span>
-                </button><!--!-->
-
-                <br>
-            </div>
-        </div>
     </div>
 
     <script src="_framework/blazor.webassembly.js"></script>
+    <script>navigator.serviceWorker.register('service-worker.js');</script>
     <script src="jsInterop.js"></script>
 </body>
 </html>
